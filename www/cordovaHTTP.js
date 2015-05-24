@@ -19,11 +19,11 @@ var http = {
     acceptAllCerts: function(allow, success, failure) {
         return exec(success, failure, "CordovaHttpPlugin", "acceptAllCerts", [allow]);
     },
-    post: function(url, params, headers, success, failure) {
-        return exec(success, failure, "CordovaHttpPlugin", "post", [url, params, headers]);
+    post: function(url, params, headers, success, failure, emptyCookieStorage) {
+        return exec(success, failure, "CordovaHttpPlugin", "post", [url, params, headers, emptyCookieStorage ? true : false]);
     },
-    get: function(url, params, headers, success, failure) {
-        return exec(success, failure, "CordovaHttpPlugin", "get", [url, params, headers]);
+    get: function(url, params, headers, success, failure, emptyCookieStorage) {
+        return exec(success, failure, "CordovaHttpPlugin", "get", [url, params, headers, emptyCookieStorage ? true : false]);
     },
     uploadFile: function(url, params, headers, filePath, name, success, failure) {
         return exec(success, failure, "CordovaHttpPlugin", "uploadFile", [url, params, headers, filePath, name]);
@@ -69,7 +69,7 @@ if (typeof angular !== "undefined") {
     angular.module('cordovaHTTP', []).factory('cordovaHTTP', function($timeout, $q) {
         function makePromise(fn, args, async) {
             var deferred = $q.defer();
-            
+
             var success = function(response) {
                 if (async) {
                     $timeout(function() {
@@ -79,7 +79,7 @@ if (typeof angular !== "undefined") {
                     deferred.resolve(response);
                 }
             };
-            
+
             var fail = function(response) {
                 if (async) {
                     $timeout(function() {
@@ -89,15 +89,15 @@ if (typeof angular !== "undefined") {
                     deferred.reject(response);
                 }
             };
-            
+
             args.push(success);
             args.push(fail);
-            
+
             fn.apply(http, args);
-            
+
             return deferred.promise;
         }
-        
+
         var cordovaHTTP = {
             useBasicAuth: function(username, password) {
                 return makePromise(http.useBasicAuth, [username, password]);
@@ -111,11 +111,11 @@ if (typeof angular !== "undefined") {
             acceptAllCerts: function(allow) {
                 return makePromise(http.acceptAllCerts, [allow]);
             },
-            post: function(url, params, headers) {
-                return makePromise(http.post, [url, params, headers], true);
+            post: function(url, params, headers, emptyCookieStorage) {
+                return makePromise(http.post, [url, params, headers, emptyCookieStorage ? true : false], true);
             },
-            get: function(url, params, headers) {
-                return makePromise(http.get, [url, params, headers], true);
+            get: function(url, params, headers, emptyCookieStorage) {
+                return makePromise(http.get, [url, params, headers, emptyCookieStorage ? true : false], true);
             },
             uploadFile: function(url, params, headers, filePath, name) {
                 return makePromise(http.uploadFile, [url, params, headers, filePath, name], true);
