@@ -83,7 +83,11 @@
    [manager POST:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithInt:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:responseObject forKey:@"data"];
+      if (responseObject != nil) {
+        [dictionary setObject:responseObject forKey:@"data"];
+      } else {
+        [dictionary setObject:[NSNull null] forKey:@"data"];
+      }
       [dictionary setObject:operation.response.allHeaderFields forKey:@"headers"];
       CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
       [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
@@ -109,7 +113,11 @@
    [manager GET:url parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
       NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
       [dictionary setObject:[NSNumber numberWithInt:operation.response.statusCode] forKey:@"status"];
-      [dictionary setObject:responseObject forKey:@"data"];
+      if (responseObject != nil) {
+        [dictionary setObject:responseObject forKey:@"data"];
+      } else {
+        [dictionary setObject:[NSNull null] forKey:@"data"];
+      }
       [dictionary setObject:operation.response.allHeaderFields forKey:@"headers"];
       CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
       [weakSelf.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
